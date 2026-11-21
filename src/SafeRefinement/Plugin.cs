@@ -35,6 +35,7 @@ public class Plugin : BaseUnityPlugin
         FailureEffect = Config.Bind("General", "FailureEffect", false,
             "Play the Forge's failure effect when a refinement fails. Only used while Enabled is true.");
         _configWrite = ConfigWriteTime();
+        Quotes.EnsureFile();
 
         _harmony = new Harmony(Guid);
         _harmony.PatchAll(typeof(Plugin).Assembly);
@@ -72,8 +73,9 @@ public class Plugin : BaseUnityPlugin
 internal static class DoCraftingPatch
 {
     private const string FailMessageKey = "$msg_upgrader_failed";
-    private const string OwnKey = "rkmax_saferefinement_fail";
-    private const string OwnText = "Refining of $1 failed, it stays at level $2";
+    private const string OwnKey = "rkmax_saferefinement_fail_";
+    private const string OwnText = "$1 failed to refine. Still level $2.";
+    private const string QuoteColor = "#D9A066";
 
     private static readonly FieldInfo BreakChanceField =
         AccessTools.Field(typeof(ItemDrop.ItemData.SharedData), nameof(ItemDrop.ItemData.SharedData.m_breakChance));
@@ -141,10 +143,14 @@ internal static class DoCraftingPatch
     {
         if (!Plugin.Enabled.Value)
             return vanilla;
-        // Localize turns "$1" into "[1]" unless the text comes from a translation, so register one.
-        if (Translations?.GetValue(Localization.instance) is Dictionary<string, string> words && !words.ContainsKey(OwnKey))
-            words[OwnKey] = OwnText;
-        return "$" + OwnKey;
+        string quote = Quotes.Next();
+        string text = quote == null ? OwnText : $"{OwnText}\n<color={QuoteColor}>{quote}</color>";
+        // Localize turns "$1" into "[1]" unless the text comes from a translation, so register one. It also
+        // caches by key, so each distinct text gets its own key.
+        string key = OwnKey + ((uint)text.GetStableHashCode()).ToString("x8");
+        if (Translations?.GetValue(Localization.instance) is Dictionary<string, string> words)
+            words[key] = text;
+        return "$" + key;
     }
 
     private static EffectList FailEffects(EffectList vanilla) =>

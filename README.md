@@ -19,7 +19,10 @@ Don't run it together with another Forge of Potential mod (MySix Forge of Potent
 
 ## What it does
 
-In the unmodded game every idol has a break chance of 1, so the 35% of tries that don't succeed destroy the item and give back 35% of its materials. With the mod, a failed try gives the item back at its current level, shows "Refining of X failed, it stays at level N" and plays no failure effect.
+In the unmodded game every idol has a break chance of 1, so the 35% of tries that don't succeed destroy the item and give back 35% of its materials. With the mod, a failed try gives the item back at its current level and plays no failure effect. The message in the middle of the screen says so, with a random taunt under it:
+
+> Mistwalker failed to refine. Still level 4.
+> *Odin saw that. He's still laughing.*
 
 If the game's refinement code changes in an update, the mod doesn't patch it and writes an error to the BepInEx log. Refinement is then vanilla again, breaks included, until the mod is updated.
 
@@ -29,6 +32,8 @@ If the game's refinement code changes in an update, the mod doesn't patch it and
 
 - `Enabled` (true): turn the mod off to get vanilla refinement back.
 - `FailureEffect` (false): play the Forge's failure effect on a failed try.
+
+Taunts live in `BepInEx/config/rkmax.saferefinement.quotes.txt`, one per line, written with 15 defaults the first time the game starts. Edit it while playing: the next failure uses the new list. Lines starting with `#` are skipped, and an empty file means no taunt. A taunt never repeats the previous one.
 
 ## Build
 
