@@ -1,0 +1,9 @@
+{
+  "name": "SafeRefinement",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/rkmax/valheim-safe-refinement",
+  "description": "A failed refinement at the Forge of Potential keeps your item at its level instead of destroying it. Same odds and costs.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2351"
+  ]
+}
